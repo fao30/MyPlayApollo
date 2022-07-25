@@ -2,19 +2,23 @@
   "dependencies": {
     "@apollo/client": "^3.4.16",
     "@apollo/link-context": "^2.0.0-beta.3",
+    "@react-native-cookies/cookies": "^6.2.1",
     "@react-native-picker/picker": "2.4.0",
     "@react-navigation/native": "^6.0.11",
     "@react-navigation/native-stack": "^6.7.0",
+    "apollo-link-http": "^1.5.17",
     "expo": "^45.0.0",
     "graphql": "^15.0.0",
     "graphql-ws": "^5.9.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-native": "0.68.2",
+    "react-native-cookie": "^0.3.0",
     "react-native-web": "0.17.7",
     "react-redux": "^8.0.2",
     "redux": "^4.2.0",
-    "redux-thunk": "^2.4.1"
+    "redux-thunk": "^2.4.1",
+    "set-cookie-parser": "^2.5.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

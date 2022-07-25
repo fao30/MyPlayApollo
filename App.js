@@ -14,7 +14,6 @@ import Login from "./page/login";
 import Student from "./page/student";
 import Employee from "./page/employee";
 
-
 // Imperial I-class Star Destroyer
 const defaultStarshipId = "c3RhcnNoaXBzOjM=";
 
@@ -30,36 +29,21 @@ const LIST_STARSHIPTS = gql`
 `;
 
 const GET_STARSHIP = gql`
-  query getStarship($id: ID!) {
-    starship(id: $id) {
-      id
-      name
-      model
-      starshipClass
-      manufacturers
-      length
-      crew
-      costInCredits
-      consumables
-      filmConnection {
-        films {
-          id
-          title
-        }
-      }
-    }
+  query EmployeeInfo {
+    employeesInfo
   }
 `;
 
 const AppWrap = () => {
-
   // const [foundToken, setFoundToken] = useState("");
+  const [tok, setTok] = useState("");
   const [isLoad, setIsLoad] = useState(true);
   const { access_token } = useSelector((state) => state); //INI DIAAAA
 
   useEffect(() => {
     // checkToken();
     console.log("JALAN GA?", access_token);
+    // console.log("JALAN GA TOKEEENNN?", isLoad);
   }, [access_token]);
 
   return (
@@ -97,6 +81,15 @@ function RootComponent() {
   const { data, error, loading } = useQuery(GET_STARSHIP, {
     variables: { id: starshipId },
   });
+
+  useEffect(() => {
+    // checkToken();
+    console.log("===============================");
+    console.log(data, "THISSSS<<<================");
+    // data?.me?.groups.forEach(e => {
+    //   console.log(e);
+    // });
+  }, [data]);
 
   if (error) {
     console.log("Error fetching starship", error);
