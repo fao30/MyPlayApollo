@@ -5,11 +5,15 @@ import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { Provider, useSelector } from "react-redux";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
+
 const HomeStack = createNativeStackNavigator();
 import store from "./store";
 
 import { apolloClient } from "./apollo";
 import Login from "./page/login";
+import Student from "./page/student";
+import Employee from "./page/employee";
+
 
 // Imperial I-class Star Destroyer
 const defaultStarshipId = "c3RhcnNoaXBzOjM=";
@@ -48,6 +52,7 @@ const GET_STARSHIP = gql`
 `;
 
 const AppWrap = () => {
+
   // const [foundToken, setFoundToken] = useState("");
   const [isLoad, setIsLoad] = useState(true);
   const { access_token } = useSelector((state) => state); //INI DIAAAA
@@ -60,7 +65,7 @@ const AppWrap = () => {
   return (
     <NavigationContainer initialRouteName="Home">
       <HomeStack.Navigator>
-        {!access_token ? (
+        {access_token ? (
           <>
             <HomeStack.Screen
               options={{ headerShown: false }}
@@ -70,22 +75,16 @@ const AppWrap = () => {
           </>
         ) : (
           <>
-            <Login></Login>
-            {/* <HomeStack.Screen
+            <HomeStack.Screen
               options={{ headerShown: false }}
-              name="MyTrips"
-              component={mytrips}
+              name="Student"
+              component={Student}
             />
             <HomeStack.Screen
               options={{ headerShown: false }}
-              name="quarantineDetail"
-              component={quarantineDetail}
+              name="Employee"
+              component={Employee}
             />
-            <HomeStack.Screen
-              options={{ headerShown: false }}
-              name="AddQuarantine"
-              component={addQuarantine}
-            /> */}
           </>
         )}
       </HomeStack.Navigator>

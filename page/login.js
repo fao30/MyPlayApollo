@@ -10,8 +10,12 @@ import {
   Button,
   TouchableOpacity,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
 
 export default function Login() {
+  const navigation = useNavigation();
+
   const [email, setEmail] = useState("studmail/u36614");
   const [password, setPassword] = useState("JcCPVy");
 
@@ -43,6 +47,7 @@ export default function Login() {
         <TouchableOpacity
           onPress={() => {
             console.log(email, password);
+            navigation.navigate("Student");
           }}
           style={styles.loginBtn}
         >

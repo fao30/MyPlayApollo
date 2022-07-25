@@ -10,44 +10,23 @@ import {
   Button,
   TouchableOpacity,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
-export default function Login() {
+
+export default function Student() {
+  const navigation = useNavigation();
   const [email, setEmail] = useState("studmail/u36614");
   const [password, setPassword] = useState("JcCPVy");
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
       <View style={styles.container}>
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.TextInput}
-            placeholder="Email."
-            placeholderTextColor="#003f5c"
-            onChangeText={(email) => setEmail(email)}
-          />
-        </View>
+        <Text  
+        onPress={() => {
+          navigation.navigate("Employee");
+        }}
+        > YOU ARE A STUDENT</Text>
 
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.TextInput}
-            placeholder="Password."
-            placeholderTextColor="#003f5c"
-            secureTextEntry={true}
-            onChangeText={(password) => setPassword(password)}
-          />
-        </View>
-
-        <TouchableOpacity>
-          <Text style={styles.forgot_button}>Forgot Password?</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            console.log(email, password);
-          }}
-          style={styles.loginBtn}
-        >
-          <Text style={styles.loginText}>LOGIN</Text>
-        </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
   );
