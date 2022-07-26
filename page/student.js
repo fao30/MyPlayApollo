@@ -1,34 +1,75 @@
-import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableWithoutFeedback,
-  Keyboard,
-  TextInput,
-  Button,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
+import { Avatar, Button, Card, Title, Paragraph } from "react-native-paper";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
+import {
+  gql,
+  useQuery,
+  useMutation,
+} from "@apollo/client";
+import { setToken } from "../store/actions/index";
+import { useDispatch, useSelector } from "react-redux";
+import { AsyncStorage } from "react-native";
 
+const GET_STUDENT = gql`
+  query StudentInfo {
+    studentInfo
+  }
+`;
 
 export default function Student() {
   const navigation = useNavigation();
-  const [email, setEmail] = useState("studmail/u36614");
-  const [password, setPassword] = useState("JcCPVy");
+  const dispatch = useDispatch();
+  const { data, error, loading } = useQuery(GET_STUDENT);
+  const [studentDetails, setStudents] = useState([]);
+  useEffect(() => {
+    setStudents(data?.studentInfo || []);
+  }, [data]);
+
+  const LOGOUT_SESSION = gql`
+    mutation WipeMySession {
+      wipeMySession
+    }
+  `;
+
+  const [logout, { data: dataLogSession }] = useMutation(LOGOUT_SESSION);
+
+  const removeData = async () => {
+    await AsyncStorage.removeItem("token");
+  };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
-      <View style={styles.container}>
-        <Text  
-        onPress={() => {
-          navigation.navigate("Employee");
-        }}
-        > YOU ARE A STUDENT</Text>
+    <View style={{ flex: 1 }}>
+      <ScrollView>
+        <View style={styles.text}>
+          <Text style={styles.textHeader}>Student Page</Text>
+        </View>
 
+        {studentDetails?.map((e, i) => (
+          <Card key={i} style={styles.cardStyle}>
+            <Card.Title title="Group" subtitle={e?.Group} />
+            <Card.Title title="Basis" subtitle={e?.basis} />
+            <Card.Title title="Dapartment Name" subtitle={e?.department_name} />
+            <Card.Title title="Speciality Name" subtitle={e?.namespec} />
+            <Card.Actions>
+              <Button>Detail</Button>
+            </Card.Actions>
+          </Card>
+        ))}
+      </ScrollView>
+      <View style={styles.footer}>
+        <Button
+          onPress={(e) => {
+            e.preventDefault();
+            dispatch(setToken(""));
+            removeData();
+            logout();
+          }}
+        >
+          Logout
+        </Button>
       </View>
-    </TouchableWithoutFeedback>
+    </View>
   );
 }
 
@@ -39,10 +80,35 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  footer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 70,
+    fontWeight: "bold",
+  },
+  text: {
+    height: 100,
+    backgroundColor: "yellow",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  textHeader: {
+    fontWeight: "bold",
+    fontSize: 25,
+    marginTop: 10,
+  },
   image: {
     marginBottom: 40,
   },
-
+  cardStyle: {
+    marginTop: 20,
+    marginBottom: 20,
+  },
   inputView: {
     backgroundColor: "#FFC0CB",
     borderRadius: 30,

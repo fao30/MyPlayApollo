@@ -1,35 +1,72 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { Avatar, Button, Card, Title, Paragraph } from "react-native-paper";
 import {
   StyleSheet,
   Text,
   View,
-  Image,
   TouchableWithoutFeedback,
   Keyboard,
-  TextInput,
-  Button,
-  TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { gql, useQuery, useMutation } from "@apollo/client";
+import { useDispatch, useSelector } from "react-redux";
+import { setToken } from "../store/actions/index";
+import { AsyncStorage } from "react-native";
+
+const GET_EMPLOYEE = gql`
+  query EmployeeInfo {
+    employeesInfo
+  }
+`;
 
 export default function Employee() {
   const navigation = useNavigation();
-  const [email, setEmail] = useState("studmail/u36614");
-  const [password, setPassword] = useState("JcCPVy");
+  const { data, error, loading } = useQuery(GET_EMPLOYEE);
+  const [employeeDetails, setEmployeeDetails] = useState({});
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    setEmployeeDetails(data?.employeesInfo);
+  }, [data]);
+
+  const LOGOUT_SESSION = gql`
+    mutation WipeMySession {
+      wipeMySession
+    }
+  `;
+  const [logout, { data: dataLogSession }] = useMutation(LOGOUT_SESSION);
+
+  const removeData = async () => {
+    await AsyncStorage.removeItem("token");
+  };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <Text
-          onPress={() => {
-            navigation.navigate("Student");
+    <View style={{ flex: 1 }}>
+      <ScrollView>
+        <View style={styles.text}>
+          <Text style={styles.textHeader}>Employee Page</Text>
+        </View>
+        <Card style={styles.cardStyle}>
+          <Card.Title title="ID" subtitle={employeeDetails?.id} />
+          <Card.Title title="Full Name" subtitle={employeeDetails?.full_name} />
+          <Card.Title title="First Name" subtitle={employeeDetails?.first} />
+          <Card.Title title="Last Name" subtitle={employeeDetails?.last} />
+        </Card>
+      </ScrollView>
+      <View style={styles.footer}>
+        <Button
+          onPress={(e) => {
+            e.preventDefault();
+            dispatch(setToken(""));
+            removeData();
+            logout();
           }}
         >
-          {" "}
-          YOU ARE AN EMPLOYEE
-        </Text>
+          Logout
+        </Button>
       </View>
-    </TouchableWithoutFeedback>
+    </View>
   );
 }
 
@@ -40,10 +77,35 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  footer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 70,
+    fontWeight: "bold",
+  },
   image: {
     marginBottom: 40,
   },
-
+  text: {
+    height: 100,
+    backgroundColor: "yellow",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  textHeader: {
+    fontWeight: "bold",
+    fontSize: 25,
+    marginTop: 10,
+  },
+  cardStyle: {
+    marginTop: 20,
+    marginBottom: 20,
+  },
   inputView: {
     backgroundColor: "#FFC0CB",
     borderRadius: 30,

@@ -5,7 +5,7 @@ import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { Provider, useSelector } from "react-redux";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
-
+import { AsyncStorage } from "react-native";
 const HomeStack = createNativeStackNavigator();
 import store from "./store";
 
@@ -17,39 +17,19 @@ import Employee from "./page/employee";
 // Imperial I-class Star Destroyer
 const defaultStarshipId = "c3RhcnNoaXBzOjM=";
 
-const LIST_STARSHIPTS = gql`
-  query listStarships {
-    allStarships {
-      starships {
-        id
-        name
-      }
-    }
+const GET_ROLE = gql`
+  query Me {
+    me
   }
 `;
 
-const GET_STARSHIP = gql`
-  query EmployeeInfo {
-    employeesInfo
-  }
-`;
-
-const AppWrap = () => {
-  // const [foundToken, setFoundToken] = useState("");
-  const [tok, setTok] = useState("");
-  const [isLoad, setIsLoad] = useState(true);
+const AppWrap = ({ isStudent }) => {
   const { access_token } = useSelector((state) => state); //INI DIAAAA
-
-  useEffect(() => {
-    // checkToken();
-    console.log("JALAN GA?", access_token);
-    // console.log("JALAN GA TOKEEENNN?", isLoad);
-  }, [access_token]);
 
   return (
     <NavigationContainer initialRouteName="Home">
       <HomeStack.Navigator>
-        {access_token ? (
+        {!access_token ? (
           <>
             <HomeStack.Screen
               options={{ headerShown: false }}
@@ -59,16 +39,19 @@ const AppWrap = () => {
           </>
         ) : (
           <>
-            <HomeStack.Screen
-              options={{ headerShown: false }}
-              name="Student"
-              component={Student}
-            />
-            <HomeStack.Screen
-              options={{ headerShown: false }}
-              name="Employee"
-              component={Employee}
-            />
+            {isStudent ? (
+              <HomeStack.Screen
+                options={{ headerShown: false }}
+                name="Student"
+                component={Student}
+              />
+            ) : (
+              <HomeStack.Screen
+                options={{ headerShown: false }}
+                name="Employee"
+                component={Employee}
+              />
+            )}
           </>
         )}
       </HomeStack.Navigator>
@@ -78,18 +61,20 @@ const AppWrap = () => {
 
 function RootComponent() {
   const [starshipId, setStarshipId] = useState(defaultStarshipId);
-  const { data, error, loading } = useQuery(GET_STARSHIP, {
+  const [isStudent, setIsStudent] = useState(true);
+  const { access_token } = useSelector((state) => state); //INI DIAAAA
+  const { data, error, loading } = useQuery(GET_ROLE, {
     variables: { id: starshipId },
   });
 
   useEffect(() => {
     // checkToken();
-    console.log("===============================");
-    console.log(data, "THISSSS<<<================");
-    // data?.me?.groups.forEach(e => {
-    //   console.log(e);
-    // });
-  }, [data]);
+    if (data?.me?.groups.indexOf("student") > -1) {
+      setIsStudent(true);
+    } else {
+      setIsStudent(false);
+    }
+  }, [access_token]);
 
   if (error) {
     console.log("Error fetching starship", error);
@@ -97,7 +82,11 @@ function RootComponent() {
 
   return (
     <View style={styles.container}>
-      {loading ? <ActivityIndicator color="#333" /> : <AppWrap />}
+      {loading ? (
+        <ActivityIndicator color="#333" />
+      ) : (
+        <AppWrap isStudent={isStudent} />
+      )}
     </View>
   );
 }
@@ -111,7 +100,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: 50,
+    top: 0,
   },
   label: {
     marginBottom: 2,
