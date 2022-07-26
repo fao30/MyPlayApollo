@@ -57,18 +57,6 @@ export default function Student() {
           </Card>
         ))}
       </ScrollView>
-      <View style={styles.footer}>
-        <Button
-          onPress={(e) => {
-            e.preventDefault();
-            dispatch(setToken(""));
-            removeData();
-            logout();
-          }}
-        >
-          Logout
-        </Button>
-      </View>
     </View>
   );
 }

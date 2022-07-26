@@ -4,6 +4,8 @@
     "@apollo/link-context": "^2.0.0-beta.3",
     "@react-native-cookies/cookies": "^6.2.1",
     "@react-native-picker/picker": "2.4.0",
+    "@react-navigation/bottom-tabs": "^6.3.2",
+    "@react-navigation/drawer": "^6.4.3",
     "@react-navigation/native": "^6.0.11",
     "@react-navigation/native-stack": "^6.7.0",
     "apollo-link-http": "^1.5.17",
@@ -14,7 +16,9 @@
     "react-dom": "17.0.2",
     "react-native": "0.68.2",
     "react-native-cookie": "^0.3.0",
+    "react-native-gesture-handler": "^2.5.0",
     "react-native-paper": "^4.12.4",
+    "react-native-reanimated": "^2.9.1",
     "react-native-web": "0.17.7",
     "react-redux": "^8.0.2",
     "redux": "^4.2.0",
@@ -23,7 +27,8 @@
     "sync-storage": "^0.4.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9"
+    "@babel/core": "^7.12.9",
+    "@babel/plugin-proposal-export-namespace-from": "^7.18.9"
   },
   "scripts": {
     "start": "expo start",

@@ -8,51 +8,42 @@ import {
   Keyboard,
   ScrollView,
 } from "react-native";
+import { ApolloProvider, gql, useQuery, useMutation } from "@apollo/client";
 import { useNavigation } from "@react-navigation/native";
-import { gql, useQuery, useMutation } from "@apollo/client";
-import { useDispatch, useSelector } from "react-redux";
 import { setToken } from "../store/actions/index";
-import { AsyncStorage } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
-const GET_EMPLOYEE = gql`
-  query EmployeeInfo {
-    employeesInfo
-  }
-`;
-
-export default function Employee() {
+export default function Home() {
   const navigation = useNavigation();
-  const { data, error, loading } = useQuery(GET_EMPLOYEE);
-  const [employeeDetails, setEmployeeDetails] = useState({});
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    setEmployeeDetails(data?.employeesInfo);
-  }, [data]);
+  const removeData = async () => {
+    await AsyncStorage.removeItem("token");
+  };
 
   const LOGOUT_SESSION = gql`
     mutation WipeMySession {
       wipeMySession
     }
   `;
-  const [logout, { data: dataLogSession }] = useMutation(LOGOUT_SESSION);
 
-  const removeData = async () => {
-    await AsyncStorage.removeItem("token");
-  };
+  const [logout, { data: dataLogSession }] = useMutation(LOGOUT_SESSION);
 
   return (
     <View style={{ flex: 1 }}>
       <ScrollView>
-        <View style={styles.text}>
-          <Text style={styles.textHeader}>Employee Page</Text>
-        </View>
-        <Card style={styles.cardStyle}>
-          <Card.Title title="ID" subtitle={employeeDetails?.id} />
-          <Card.Title title="Full Name" subtitle={employeeDetails?.full_name} />
-          <Card.Title title="First Name" subtitle={employeeDetails?.first} />
-          <Card.Title title="Last Name" subtitle={employeeDetails?.last} />
-        </Card>
+        <Button style={styles.TextSetting}>Setting</Button>
+        <Button
+          style={styles.TextHome}
+          onPress={(e) => {
+            e.preventDefault();
+            dispatch(setToken(""));
+            removeData();
+            logout();
+          }}
+        >
+          <Text style={styles.TextLogout}>Logout</Text>
+        </Button>
       </ScrollView>
     </View>
   );
@@ -74,6 +65,18 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     height: 70,
+    fontWeight: "bold",
+  },
+  TextHome: {
+    height: 100,
+    marginTop: 0,
+    marginLeft: 0,
+  },
+  TextSetting: {
+    marginTop: 500,
+  },
+  TextLogout: {
+    fontSize: 25,
     fontWeight: "bold",
   },
   image: {

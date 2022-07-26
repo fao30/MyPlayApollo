@@ -8,11 +8,17 @@ import { NavigationContainer } from "@react-navigation/native";
 import { AsyncStorage } from "react-native";
 const HomeStack = createNativeStackNavigator();
 import store from "./store";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+
+const Tab = createBottomTabNavigator();
 
 import { apolloClient } from "./apollo";
 import Login from "./page/login";
 import Student from "./page/student";
 import Employee from "./page/employee";
+import Home from "./page/Home";
+import Profile from "./page/Profile";
 
 // Imperial I-class Star Destroyer
 const defaultStarshipId = "c3RhcnNoaXBzOjM=";
@@ -25,13 +31,27 @@ const GET_ROLE = gql`
 
 const AppWrap = ({ isStudent }) => {
   const { access_token } = useSelector((state) => state); //INI DIAAAA
+  // const value = AsyncStorage.getItem('token');
 
   return (
     <NavigationContainer initialRouteName="Home">
-      <HomeStack.Navigator>
+      <Tab.Navigator
+        tabBarOptions={{
+          style: {
+            position: "absolute",
+            bottom: 25,
+            left: 20,
+            right: 20,
+            elevation: 0,
+            backgroundColor: "#ffffff",
+            borderRadius: 15,
+            height: 90,
+          },
+        }}
+      >
         {!access_token ? (
           <>
-            <HomeStack.Screen
+            <Tab.Screen
               options={{ headerShown: false }}
               name="Login"
               component={Login}
@@ -40,21 +60,106 @@ const AppWrap = ({ isStudent }) => {
         ) : (
           <>
             {isStudent ? (
-              <HomeStack.Screen
-                options={{ headerShown: false }}
-                name="Student"
-                component={Student}
-              />
+              <>
+                <Tab.Screen
+                  // options={{ headerShown: false }}
+                  name="Home"
+                  component={Home}
+                  options={{
+                    tabBarLabel: "Home",
+                    headerShown: false,
+                    tabBarIcon: ({ color, size }) => (
+                      <MaterialCommunityIcons
+                        name="home"
+                        color={color}
+                        size={size}
+                      />
+                    ),
+                  }}
+                />
+                <Tab.Screen
+                  options={{
+                    tabBarLabel: "Students",
+                    headerShown: false,
+                    tabBarIcon: ({ color, size }) => (
+                      <MaterialCommunityIcons
+                        name="bag-personal"
+                        color={color}
+                        size={size}
+                      />
+                    ),
+                  }}
+                  name="Student"
+                  component={Student}
+                />
+                <Tab.Screen
+                  options={{
+                    tabBarLabel: "Profile",
+                    headerShown: false,
+                    tabBarIcon: ({ color, size }) => (
+                      <MaterialCommunityIcons
+                        name="account"
+                        color={color}
+                        size={size}
+                      />
+                    ),
+                  }}
+                  name="Profile"
+                  component={Profile}
+                />
+              </>
             ) : (
-              <HomeStack.Screen
-                options={{ headerShown: false }}
-                name="Employee"
-                component={Employee}
-              />
+              <>
+                <Tab.Screen
+                  name="Home"
+                  component={Home}
+                  options={{
+                    tabBarLabel: "Home",
+                    headerShown: false,
+                    tabBarIcon: ({ color, size }) => (
+                      <MaterialCommunityIcons
+                        name="home"
+                        color={color}
+                        size={size}
+                      />
+                    ),
+                  }}
+                />
+                <Tab.Screen
+                  options={{
+                    tabBarLabel: "Employee",
+                    headerShown: false,
+                    tabBarIcon: ({ color, size }) => (
+                      <MaterialCommunityIcons
+                        name="ballot-outline"
+                        color={color}
+                        size={size}
+                      />
+                    ),
+                  }}
+                  name="Employee"
+                  component={Employee}
+                />
+                <Tab.Screen
+                  options={{
+                    tabBarLabel: "Profile",
+                    headerShown: false,
+                    tabBarIcon: ({ color, size }) => (
+                      <MaterialCommunityIcons
+                        name="account"
+                        color={color}
+                        size={size}
+                      />
+                    ),
+                  }}
+                  name="Profile"
+                  component={Profile}
+                />
+              </>
             )}
           </>
         )}
-      </HomeStack.Navigator>
+      </Tab.Navigator>
     </NavigationContainer>
   );
 };
