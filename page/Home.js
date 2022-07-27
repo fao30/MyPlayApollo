@@ -7,18 +7,38 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ScrollView,
+  SafeAreaView,
+  Animated,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { Provider, useSelector, useDispatch } from "react-redux";
 
 export default function Home() {
   const navigation = useNavigation();
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const { tabActive } = useSelector((state) => state); //INI DIAAAA
+
+ 
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 5,
+      duration: 5000,
+    }).start();
+  }, [tabActive]);
 
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView>
-        <Text style={styles.TextHome}>WELCOME TO THE HOME PAGE</Text>
-      </ScrollView>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <Animated.View
+        style={[
+          styles.fadingContainer,
+          {
+            opacity: fadeAnim,
+          },
+        ]}
+      >
+        <Text style={styles.fadingText}>Welcome To The App!</Text>
+      </Animated.View>
+    </SafeAreaView>
   );
 }
 
@@ -28,6 +48,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  },
+  fadingText: {
+    fontSize: 28,
+  },
+  fadingContainer: {
+    padding: 20,
   },
   footer: {
     flex: 1,

@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
   image: {
     marginBottom: 40,
   },
-  text: {
+ text: {
     height: 70,
     width:400,
     marginTop:50,

@@ -1,13 +1,14 @@
 import { ApolloProvider, gql, useQuery } from "@apollo/client";
 import React, { useEffect, useState, useRef } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
-import { Provider, useSelector } from "react-redux";
+import { Provider, useSelector, useDispatch } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { AsyncStorage } from "react-native";
 import store from "./store";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { setTab } from "./store/actions/index";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -30,6 +31,7 @@ const GET_ROLE = gql`
 
 const AppWrap = ({ isStudent }) => {
   const { access_token } = useSelector((state) => state); //INI DIAAAA
+  const dispatch = useDispatch();
 
   if (!access_token) {
     return (
@@ -72,6 +74,11 @@ const AppWrap = ({ isStudent }) => {
                 <MaterialCommunityIcons name="home" color={color} size={size} />
               ),
             }}
+            listeners={{
+              tabPress: (e) => {
+                dispatch(setTab('Home')); //*************** */
+              },
+            }}
           />
           {isStudent ? (
             <>
@@ -89,6 +96,11 @@ const AppWrap = ({ isStudent }) => {
                 }}
                 name="Student"
                 component={Student}
+                listeners={{
+                  tabPress: (e) => {
+                    dispatch(setTab('Student')); //*************** */
+                  },
+                }}
               />
             </>
           ) : (

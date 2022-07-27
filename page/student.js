@@ -2,11 +2,7 @@ import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
 import { Avatar, Button, Card, Title, Paragraph } from "react-native-paper";
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
-import {
-  gql,
-  useQuery,
-  useMutation,
-} from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 import { setToken } from "../store/actions/index";
 import { useDispatch, useSelector } from "react-redux";
 import { AsyncStorage } from "react-native";
@@ -21,10 +17,15 @@ export default function Student() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { data, error, loading } = useQuery(GET_STUDENT);
+  const { tabActive } = useSelector((state) => state); //INI DIAAAA
   const [studentDetails, setStudents] = useState([]);
   useEffect(() => {
     setStudents(data?.studentInfo || []);
   }, [data]);
+
+  useEffect(() => {
+    console.log(tabActive, "<=====================");
+  }, [tabActive]);
 
   const LOGOUT_SESSION = gql`
     mutation WipeMySession {
@@ -81,20 +82,20 @@ const styles = StyleSheet.create({
   },
   text: {
     height: 70,
-    width:400,
-    marginTop:50,
+    width: 400,
+    marginTop: 50,
     backgroundColor: "#5384ed",
     justifyContent: "center",
-    marginLeft:10,
-    shadowOpacity:0.5,
-    shadowRadius:1,
+    marginLeft: 10,
+    shadowOpacity: 0.5,
+    shadowRadius: 1,
     borderRadius: 200,
     alignItems: "center",
   },
   textHeader: {
     fontWeight: "bold",
     fontSize: 25,
-    color:"white",
+    color: "white",
     marginTop: 10,
   },
   image: {

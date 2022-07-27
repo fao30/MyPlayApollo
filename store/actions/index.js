@@ -6,3 +6,12 @@ export function setToken(token){
     })
   }
 }
+
+export function setTab(payload){
+  return(dispatch) => {
+    dispatch({
+      type: 'tab/set',
+      payload: payload
+    })
+  }
+}
