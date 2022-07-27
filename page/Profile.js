@@ -6,16 +6,42 @@ import {
   View,
   TouchableWithoutFeedback,
   Keyboard,
+  Animated,
+  PanResponder,
   ScrollView,
 } from "react-native";
 import { ApolloProvider, gql, useQuery, useMutation } from "@apollo/client";
 import { useNavigation } from "@react-navigation/native";
 import { setToken } from "../store/actions/index";
 import { useDispatch, useSelector } from "react-redux";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 export default function Home() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const [coordinate, setCoordinate] = useState(0);
+
+  useEffect(() => {
+    if (coordinate > 590) {
+      dispatch(setToken(""));
+      removeData();
+      logout();
+    }
+  }, [coordinate]);
+
+  const pan = useRef(new Animated.ValueXY()).current;
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }]),
+      onPanResponderRelease: (e, gesture) => {
+        setCoordinate(gesture.moveY);
+        Animated.spring(pan, {
+          toValue: { x: 0, y: 0 },
+        }).start();
+      },
+    })
+  ).current;
 
   const removeData = async () => {
     await AsyncStorage.removeItem("token");
@@ -30,21 +56,24 @@ export default function Home() {
   const [logout, { data: dataLogSession }] = useMutation(LOGOUT_SESSION);
 
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView>
-        <Button style={styles.TextSetting}>Setting</Button>
-        <Button
-          style={styles.TextHome}
-          onPress={(e) => {
-            e.preventDefault();
-            dispatch(setToken(""));
-            removeData();
-            logout();
-          }}
-        >
-          <Text style={styles.TextLogout}>Logout</Text>
-        </Button>
-      </ScrollView>
+    <View style={styles.container}>
+      <Button style={styles.TextSetting}>Setting</Button>
+      <Text style={styles.titleText}>Drag & Release to the box, to logout</Text>
+      <Animated.View
+        style={{
+          transform: [{ translateX: pan.x }, { translateY: pan.y }],
+        }}
+        {...panResponder.panHandlers}
+      >
+        <MaterialCommunityIcons name="arrow-down" color="black" size={100} />
+      </Animated.View>
+      <MaterialCommunityIcons
+        style={styles.line}
+        name="arrow-down-bold-box-outline"
+        color="black"
+        size={100}
+      />
+      <Text>LOGOUT BOX</Text>
     </View>
   );
 }
@@ -55,6 +84,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  },
+  box: {
+    height: 150,
+    width: 150,
+    backgroundColor: "blue",
+    borderRadius: 5,
   },
   footer: {
     flex: 1,
@@ -73,7 +108,10 @@ const styles = StyleSheet.create({
     marginLeft: 0,
   },
   TextSetting: {
-    marginTop: 500,
+    bottom: 10,
+  },
+  line: {
+    paddingTop: 250,
   },
   TextLogout: {
     fontSize: 25,
