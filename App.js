@@ -1,17 +1,16 @@
 import { ApolloProvider, gql, useQuery } from "@apollo/client";
-import { Picker } from "@react-native-picker/picker";
 import React, { useEffect, useState, useRef } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { Provider, useSelector } from "react-redux";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 import { AsyncStorage } from "react-native";
-const HomeStack = createNativeStackNavigator();
 import store from "./store";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 import { apolloClient } from "./apollo";
 import Login from "./page/login";
@@ -31,7 +30,20 @@ const GET_ROLE = gql`
 
 const AppWrap = ({ isStudent }) => {
   const { access_token } = useSelector((state) => state); //INI DIAAAA
-  // const value = AsyncStorage.getItem('token');
+
+  if (!access_token) {
+    return (
+      <NavigationContainer initialRouteName="Home">
+        <Stack.Navigator>
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="Login"
+            component={Login}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
 
   return (
     <NavigationContainer initialRouteName="Home">
@@ -49,116 +61,71 @@ const AppWrap = ({ isStudent }) => {
           },
         }}
       >
-        {!access_token ? (
-          <>
-            <Tab.Screen
-              options={{ headerShown: false }}
-              name="Login"
-              component={Login}
-            />
-          </>
-        ) : (
-          <>
-            {isStudent ? (
-              <>
-                <Tab.Screen
-                  // options={{ headerShown: false }}
-                  name="Home"
-                  component={Home}
-                  options={{
-                    tabBarLabel: "Home",
-                    headerShown: false,
-                    tabBarIcon: ({ color, size }) => (
-                      <MaterialCommunityIcons
-                        name="home"
-                        color={color}
-                        size={size}
-                      />
-                    ),
-                  }}
+        <>
+          <Tab.Screen
+            name="Home"
+            component={Home}
+            options={{
+              tabBarLabel: "Home",
+              headerShown: false,
+              tabBarIcon: ({ color, size }) => (
+                <MaterialCommunityIcons name="home" color={color} size={size} />
+              ),
+            }}
+          />
+          {isStudent ? (
+            <>
+              <Tab.Screen
+                options={{
+                  tabBarLabel: "Students",
+                  headerShown: false,
+                  tabBarIcon: ({ color, size }) => (
+                    <MaterialCommunityIcons
+                      name="bag-personal"
+                      color={color}
+                      size={size}
+                    />
+                  ),
+                }}
+                name="Student"
+                component={Student}
+              />
+            </>
+          ) : (
+            <>
+              <Tab.Screen
+                options={{
+                  tabBarLabel: "Employee",
+                  headerShown: false,
+                  tabBarIcon: ({ color, size }) => (
+                    <MaterialCommunityIcons
+                      name="ballot-outline"
+                      color={color}
+                      size={size}
+                    />
+                  ),
+                }}
+                name="Employee"
+                component={Employee}
+              />
+            </>
+          )}
+          <Tab.Screen
+            options={{
+              tabBarLabel: "Profile",
+              headerShown: false,
+              tabBarIcon: ({ color, size }) => (
+                <MaterialCommunityIcons
+                  name="account"
+                  color={color}
+                  size={size}
                 />
-                <Tab.Screen
-                  options={{
-                    tabBarLabel: "Students",
-                    headerShown: false,
-                    tabBarIcon: ({ color, size }) => (
-                      <MaterialCommunityIcons
-                        name="bag-personal"
-                        color={color}
-                        size={size}
-                      />
-                    ),
-                  }}
-                  name="Student"
-                  component={Student}
-                />
-                <Tab.Screen
-                  options={{
-                    tabBarLabel: "Profile",
-                    headerShown: false,
-                    tabBarIcon: ({ color, size }) => (
-                      <MaterialCommunityIcons
-                        name="account"
-                        color={color}
-                        size={size}
-                      />
-                    ),
-                  }}
-                  name="Profile"
-                  component={Profile}
-                />
-              </>
-            ) : (
-              <>
-                <Tab.Screen
-                  name="Home"
-                  component={Home}
-                  options={{
-                    tabBarLabel: "Home",
-                    headerShown: false,
-                    tabBarIcon: ({ color, size }) => (
-                      <MaterialCommunityIcons
-                        name="home"
-                        color={color}
-                        size={size}
-                      />
-                    ),
-                  }}
-                />
-                <Tab.Screen
-                  options={{
-                    tabBarLabel: "Employee",
-                    headerShown: false,
-                    tabBarIcon: ({ color, size }) => (
-                      <MaterialCommunityIcons
-                        name="ballot-outline"
-                        color={color}
-                        size={size}
-                      />
-                    ),
-                  }}
-                  name="Employee"
-                  component={Employee}
-                />
-                <Tab.Screen
-                  options={{
-                    tabBarLabel: "Profile",
-                    headerShown: false,
-                    tabBarIcon: ({ color, size }) => (
-                      <MaterialCommunityIcons
-                        name="account"
-                        color={color}
-                        size={size}
-                      />
-                    ),
-                  }}
-                  name="Profile"
-                  component={Profile}
-                />
-              </>
-            )}
-          </>
-        )}
+              ),
+            }}
+            name="Profile"
+            component={Profile}
+          />
+        </>
       </Tab.Navigator>
     </NavigationContainer>
   );
