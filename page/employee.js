@@ -80,14 +80,21 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   text: {
-    height: 100,
-    backgroundColor: "yellow",
+    height: 70,
+    width:400,
+    marginTop:50,
+    backgroundColor: "#5384ed",
     justifyContent: "center",
+    marginLeft:10,
+    shadowOpacity:0.5,
+    shadowRadius:1,
+    borderRadius: 200,
     alignItems: "center",
   },
   textHeader: {
     fontWeight: "bold",
     fontSize: 25,
+    color:"white",
     marginTop: 10,
   },
   cardStyle: {

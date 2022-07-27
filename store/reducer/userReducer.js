@@ -1,5 +1,6 @@
 const initializeState = {
   access_token: '',
+  tabActive: '',
   isLoading: true,
   error: null,
 }
@@ -10,6 +11,12 @@ export default function userReducer(state = initializeState, action) {
       return {
         ...state,
         access_token: action.payload,
+        isLoading: false,
+      };
+    case 'tab/set':
+      return {
+        ...state,
+        tabActive: action.payload,
         isLoading: false,
       };
     case 'user/loading':
